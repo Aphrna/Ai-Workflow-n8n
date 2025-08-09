@@ -1,0 +1,145 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        -208
+      ],
+      "id": "6d20d578-3b7e-4d42-923d-6b32a22a6d5e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "cityName": "Kochi",
+        "language": "English"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -16
+      ],
+      "id": "aa3d20a2-efc7-4092-88b8-a318f64875d3",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "DTbir87OtA1Tp7Dc",
+          "name": "OpenWeatherMap account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get weather data from previous node\nconst weather = $json;\n\n// Create a nicely formatted message\nconst message = `\nWeather Forecast for ${weather.name}, ${weather.sys.country}\nTemperature: ${weather.main.temp}°C\nFeels Like: ${weather.main.feels_like}°C\nCondition: ${weather.weather[0].description}\nHumidity: ${weather.main.humidity}%\nWind Speed: ${weather.wind.speed} m/s\n`;\n\n// Output with a \"message\" field\nreturn [\n  {\n    json: {\n      message: message\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        -176
+      ],
+      "id": "03ce7b77-d62e-4a1d-a0db-8be77d88a366",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "sendTo": "msccs2415@rajagiri.edu",
+        "subject": "Weather Update",
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        256,
+        -176
+      ],
+      "id": "6df8f785-f82a-4fc8-b6b6-907840b37374",
+      "name": "Send a message",
+      "webhookId": "a508086a-41e8-4629-96ea-ff0e1cf2191c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "X6pcPCC7TzUNKyJy",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-08-09T11:01:02.113+05:30",
+          "Readable date": "August 9th 2025, 11:01:02 am",
+          "Readable time": "11:01:02 am",
+          "Day of week": "Saturday",
+          "Year": "2025",
+          "Month": "August",
+          "Day of month": "09",
+          "Hour": "11",
+          "Minute": "01",
+          "Second": "02",
+          "Timezone": "Asia/Calcutta (UTC+05:30)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6d1f9f3b-21b3-49af-8fc6-822298f239cc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d5d9dd4afeba83fb4877e0126183bdcdeed60e5d611a7546e6a271d79326067d"
+  },
+  "id": "RNUx4x9c8K22O4s2",
+  "tags": []
+}
